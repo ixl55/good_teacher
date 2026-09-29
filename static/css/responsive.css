@@ -1,0 +1,124 @@
+/* ===================== التصميم المتجاوب ===================== */
+
+@media (max-width: 1024px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .topbar-search { max-width: 260px; }
+}
+
+@media (max-width: 860px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        inset-inline-start: 0;
+        height: 100vh;
+        transform: translateX(110%);
+        box-shadow: var(--shadow-lg);
+        z-index: 45;
+    }
+    [dir="ltr"] .sidebar { transform: translateX(-110%); }
+    body.sidebar-open .sidebar { transform: translateX(0); }
+
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        z-index: 39;
+    }
+    body.sidebar-open .sidebar-backdrop { display: block; }
+    body.sidebar-open { overflow: hidden; }
+
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .topbar { padding: 0 14px; gap: 10px; }
+    .topbar-title { font-size: 16px; }
+    .topbar-title .subtitle { display: none; }
+    .topbar-search { max-width: none; flex: 1 1 100%; order: 3; width: 100%; }
+    .topbar-title { flex: 1; }
+    .lang-btn span { display: none; }
+    .lang-btn { padding: 0; width: 42px; justify-content: center; }
+    tbody td { white-space: nowrap; }
+    .topbar { flex-wrap: wrap; height: auto; padding-block: 10px; }
+    .search-results { max-height: 60vh; }
+
+    .content { padding: 14px; padding-bottom: max(14px, env(safe-area-inset-bottom)); }
+    .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card { padding: 13px; gap: 12px; }
+    .stat-card .stat-icon { width: 40px; height: 40px; }
+    .stat-card .stat-icon .icon { width: 20px; height: 20px; }
+    .stat-card .stat-value { font-size: 18px; }
+    .stat-card .stat-label { font-size: 11.5px; }
+
+    .form-row { grid-template-columns: 1fr; }
+    .modal { max-width: 100%; margin: 0 8px; max-height: 92vh; }
+    .panel { padding: 14px; }
+
+    /* رؤوس اللوحات: عمود واحد بعرض كامل لسهولة الاستخدام باللمس */
+    .panel-header { flex-direction: column; align-items: stretch; gap: 10px; }
+    .panel-header > .flex { width: 100%; flex-wrap: wrap; }
+    .panel-header input.form-control,
+    .panel-header select.form-control { width: 100% !important; }
+    .panel-header .btn { width: 100%; justify-content: center; }
+
+    /* أزرار النوافذ المنبثقة بعرض كامل لسهولة اللمس */
+    .modal-footer { flex-direction: column; }
+    .modal-footer .btn { width: 100%; justify-content: center; }
+    .confirm-modal .modal-footer { flex-direction: row; }
+    .confirm-modal .modal-footer .btn { width: auto; flex: 1; }
+
+    .table-actions { gap: 8px; }
+    .btn-icon { width: 38px; height: 38px; }
+    .icon-btn { width: 42px; height: 42px; }
+
+    .grid-2 { gap: 14px; }
+    .breadcrumb { font-size: 12.5px; flex-wrap: wrap; }
+
+    .hero-card { grid-template-columns: 1fr; padding: 18px; gap: 14px; }
+    .hero-card .hero-value { font-size: 44px; }
+    .hero-card .hero-side { text-align: start; }
+    .table-wrap { margin-inline: -14px; padding-inline: 14px; }
+    .sidebar { border-inline-end: 1px solid var(--border); }
+}
+
+@media (max-width: 560px) {
+    table { font-size: 12.5px; }
+    thead th, tbody td { padding: 10px 8px; }
+    .btn { padding: 10px 14px; font-size: 13px; }
+    .profile-header { flex-direction: column; align-items: flex-start; }
+    .profile-header > .flex { margin-inline-start: 0 !important; width: 100%; }
+    .toast-container {
+        inset-inline-end: 12px;
+        left: 12px;
+        top: max(12px, env(safe-area-inset-top));
+    }
+    .toast { max-width: none; }
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+    .stat-card { flex-direction: row; }
+
+    /* منع تكبير سفاري تلقائيًا عند التركيز على الحقول */
+    .form-control, .grade-input { font-size: 16px; }
+    .grade-input { width: 78px; min-height: 40px; }
+    .grade-stepper .grade-input { width: 52px; padding-inline: 4px; }
+    .step-btn { width: 38px; height: 40px; }
+    .hide-on-phone { display: none; }
+    #exam-grades-body td:first-child { white-space: normal; }
+}
+
+/* شريط حفظ الدرجات يبقى ظاهرًا أثناء التمرير عبر قائمة طويلة من الطلاب */
+.sticky-actions {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-elevated);
+    padding: 14px 0 4px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+}
+
+@media (max-width: 860px) {
+    .sticky-actions { flex-direction: column; align-items: stretch; gap: 10px; }
+    .sticky-actions .btn { width: 100%; justify-content: center; }
+}

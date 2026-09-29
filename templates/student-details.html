@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ t('student_title') }}{% endblock %}
+{% block page_title %}{{ t('student_title') }}{% endblock %}
+{% block page_subtitle %}{{ t('student_subtitle') }}{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/students" class="flex gap-8">{{ icon('users', 'icon-sm') }} {{ t('nav_students') }}</a> <span>/</span> <span id="breadcrumb-name">...</span>
+</div>
+
+<div id="student-content">
+    <div class="spinner"></div>
+</div>
+{% endblock %}
+
+{% block modals %}
+{% include "_student_modal.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>window.STUDENT_ID = {{ student_id }};</script>
+<script src="{{ url_for('static', filename='js/students.js') }}"></script>
+{% endblock %}

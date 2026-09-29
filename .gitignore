@@ -1,0 +1,14 @@
+# Local database (contains real student data)
+database.db
+*.db-journal
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db

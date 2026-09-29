@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ t('students_title') }}{% endblock %}
+{% block page_title %}{{ t('students_title') }}{% endblock %}
+{% block page_subtitle %}{{ t('students_subtitle') }}{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="flex gap-8">{{ icon('users') }} {{ t('students_list') }}</h3>
+        <div class="flex gap-8">
+            <input type="text" id="student-search" class="form-control" style="width:220px" placeholder="{{ t('search_by_name') }}" aria-label="{{ t('search_by_name') }}">
+            <button class="btn btn-outline" id="btn-import-students">{{ icon('upload', 'icon-sm') }} {{ t('import_excel') }}</button>
+            <button class="btn btn-primary" id="btn-add-student">{{ icon('plus', 'icon-sm') }} {{ t('add_student') }}</button>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>{{ t('col_student') }}</th><th>{{ t('col_class') }}</th><th>{{ t('col_section') }}</th><th>{{ t('col_average') }}</th><th>{{ t('col_grades_n') }}</th><th>{{ t('col_added') }}</th><th></th>
+                </tr>
+            </thead>
+            <tbody id="students-body">
+                <tr><td colspan="7"><div class="spinner"></div></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+{% include "_student_modal.html" %}
+{% include "_import_modal.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/students.js') }}"></script>
+{% endblock %}

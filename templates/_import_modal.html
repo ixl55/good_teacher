@@ -1,0 +1,35 @@
+{% from "_icons.html" import icon %}
+<div class="modal-backdrop" id="import-modal" role="dialog" aria-modal="true" aria-labelledby="import-modal-title">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="import-modal-title">{{ t('import_title') }}</h3>
+            <button class="icon-btn" data-close-modal="import-modal" aria-label="{{ t('close') }}">{{ icon('close') }}</button>
+        </div>
+        <div class="modal-body">
+            <p class="text-muted">{{ t('import_help') }}</p>
+            <p class="text-faint import-columns">{{ t('import_columns') }}</p>
+
+            <a class="text-link flex gap-8 mt-8" href="/api/students/import-template">{{ icon('download', 'icon-sm') }} {{ t('download_template') }}</a>
+
+            <label class="file-drop mt-16" for="import-file">
+                <span class="file-drop-icon">{{ icon('upload', 'icon-md') }}</span>
+                <span>
+                    <strong>{{ t('choose_file') }}</strong>
+                    <span class="file-drop-name" id="import-file-name">{{ t('no_file_chosen') }}</span>
+                </span>
+                <input type="file" id="import-file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+            </label>
+
+            <label class="check mt-16">
+                <input type="checkbox" id="import-skip-duplicates" checked>
+                <span>{{ t('skip_duplicates') }}</span>
+            </label>
+
+            <div id="import-result" class="mt-16" aria-live="polite"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="import-modal">{{ t('close') }}</button>
+            <button class="btn btn-primary" id="btn-run-import">{{ icon('upload', 'icon-sm') }} {{ t('import_btn') }}</button>
+        </div>
+    </div>
+</div>

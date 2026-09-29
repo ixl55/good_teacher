@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ t('subjects_title') }}{% endblock %}
+{% block page_title %}{{ t('subjects_title') }}{% endblock %}
+{% block page_subtitle %}{{ t('subjects_subtitle') }}{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="flex gap-8">{{ icon('book') }} {{ t('subjects_list') }}</h3>
+        <div class="flex gap-8">
+            <input type="text" id="subject-search" class="form-control" style="width:220px" placeholder="{{ t('search_subject') }}" aria-label="{{ t('search_subject') }}">
+            <button class="btn btn-primary" id="btn-add-subject">{{ icon('plus', 'icon-sm') }} {{ t('add_subject') }}</button>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>{{ t('col_subject') }}</th><th>{{ t('col_exams_count') }}</th><th>{{ t('col_grades_n') }}</th><th>{{ t('col_avg_grade') }}</th><th></th>
+                </tr>
+            </thead>
+            <tbody id="subjects-body">
+                <tr><td colspan="5"><div class="spinner"></div></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+{% include "_subject_modal.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/subjects.js') }}"></script>
+{% endblock %}

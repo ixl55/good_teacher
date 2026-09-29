@@ -1,0 +1,86 @@
+{% from "_icons.html" import icon %}
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ t('app_title') }}{% endblock %} — {{ t('app_title') }}</title>
+    <script>
+        (function () {
+            var theme = null;
+            try { theme = localStorage.getItem("theme"); } catch (e) {}
+            if (!theme) theme = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-backdrop"></div>
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img class="logo" src="{{ url_for('static', filename='img/logo.png') }}" alt="" width="38" height="38">
+                <div>
+                    <div class="title">{{ t('brand_title') }}</div>
+                    <div class="subtitle">{{ t('brand_subtitle') }}</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-label">{{ t('nav_main') }}</div>
+                <a href="/" class="nav-link {{ 'active' if request.path == '/' else '' }}">
+                    {{ icon('home') }} {{ t('nav_dashboard') }}
+                </a>
+                <a href="/students" class="nav-link {{ 'active' if request.path.startswith('/students') else '' }}">
+                    {{ icon('users') }} {{ t('nav_students') }}
+                </a>
+                <a href="/subjects" class="nav-link {{ 'active' if request.path.startswith('/subjects') or request.path.startswith('/exams') else '' }}">
+                    {{ icon('book') }} {{ t('nav_subjects') }}
+                </a>
+            </nav>
+            <div class="sidebar-footer">{{ t('footer') }}</div>
+        </aside>
+
+        <div class="main">
+            <header class="topbar">
+                <button class="icon-btn mobile-toggle" id="sidebar-toggle" aria-label="{{ t('menu') }}">{{ icon('menu') }}</button>
+                <div class="topbar-title">
+                    {% block page_title %}{{ t('dashboard_title') }}{% endblock %}
+                    <span class="subtitle">{% block page_subtitle %}{{ t('dashboard_subtitle') }}{% endblock %}</span>
+                </div>
+                <div class="topbar-search">
+                    <input type="text" id="global-search-input" placeholder="{{ t('search_placeholder') }}" aria-label="{{ t('search_placeholder') }}">
+                    <span class="search-icon">{{ icon('search') }}</span>
+                    <div class="search-results" id="global-search-results"></div>
+                </div>
+                <div class="topbar-actions">
+                    <a class="lang-btn" href="/lang/{{ 'en' if lang == 'ar' else 'ar' }}?next={{ request.full_path | urlencode }}"
+                       lang="{{ 'en' if lang == 'ar' else 'ar' }}" aria-label="{{ t('switch_lang_aria') }}">
+                        {{ icon('globe', 'icon-sm') }} <span>{{ t('switch_lang') }}</span>
+                    </a>
+                    <button class="icon-btn" id="theme-toggle" aria-label="{{ t('toggle_theme') }}">{{ icon('moon') }}</button>
+                </div>
+            </header>
+
+            <main class="content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    {% block modals %}{% endblock %}
+
+    <script>
+        window.LANG = {{ lang | tojson }};
+        window.I18N = {{ js_strings | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/icons.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

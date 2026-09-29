@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ t('dashboard_title') }}{% endblock %}
+{% block page_title %}{{ t('dashboard_title') }}{% endblock %}
+{% block page_subtitle %}{{ t('dashboard_subtitle') }}{% endblock %}
+
+{% block content %}
+<section class="hero-card">
+    <div>
+        <div class="hero-label">{{ t('overall_average') }}</div>
+        <div class="hero-value num"><span id="stat-average">—</span><small>{{ t('out_of_100') }}</small></div>
+        <div class="hero-meter"><span class="meter" id="stat-average-meter"><span class="meter-fill" style="inline-size:0%"></span></span></div>
+        <div class="hero-note" id="stat-average-note">{{ t('computed_from_all') }}</div>
+    </div>
+    <div class="hero-side">
+        <div class="legend-inline">
+            <span><i class="good"></i> {{ t('legend_good') }}</span>
+            <span><i></i> {{ t('legend_mid') }}</span>
+            <span><i class="low"></i> {{ t('legend_low') }}</span>
+        </div>
+    </div>
+</section>
+
+<div class="cards-grid" id="stats-cards">
+    <div class="stat-card">
+        <div class="stat-icon">{{ icon('users', 'icon-md') }}</div>
+        <div>
+            <div class="stat-value num" id="stat-students">—</div>
+            <div class="stat-label">{{ t('stat_students') }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">{{ icon('book', 'icon-md') }}</div>
+        <div>
+            <div class="stat-value num" id="stat-subjects">—</div>
+            <div class="stat-label">{{ t('stat_subjects') }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">{{ icon('clipboard', 'icon-md') }}</div>
+        <div>
+            <div class="stat-value num" id="stat-exams">—</div>
+            <div class="stat-label">{{ t('stat_exams') }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">{{ icon('checklist', 'icon-md') }}</div>
+        <div>
+            <div class="stat-value num" id="stat-grades">—</div>
+            <div class="stat-label">{{ t('stat_grades') }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="panel">
+        <div class="panel-header">
+            <h3 class="flex gap-8">{{ icon('award') }} {{ t('top_students') }}</h3>
+            <span class="hint">{{ t('sorted_by_avg') }}</span>
+        </div>
+        <div class="table-wrap">
+            <table id="top-students-table">
+                <thead>
+                    <tr><th>#</th><th>{{ t('col_student') }}</th><th>{{ t('col_class') }}</th><th>{{ t('col_average') }}</th></tr>
+                </thead>
+                <tbody id="top-students-body">
+                    <tr><td colspan="4"><div class="spinner"></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h3 class="flex gap-8">{{ icon('chart-bar') }} {{ t('subject_averages_chart') }}</h3>
+        </div>
+        <div class="chart-wrap">
+            <canvas id="subject-avg-chart" role="img" aria-label="{{ t('subject_averages_chart') }}"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h3 class="flex gap-8">{{ icon('clock') }} {{ t('recent_exams') }}</h3>
+    </div>
+    <div class="table-wrap">
+        <table id="recent-exams-table">
+            <thead>
+                <tr><th>{{ t('col_exam') }}</th><th>{{ t('col_subject') }}</th><th>{{ t('col_grades_count') }}</th><th>{{ t('col_created') }}</th><th></th></tr>
+            </thead>
+            <tbody id="recent-exams-body">
+                <tr><td colspan="5"><div class="spinner"></div></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+async function loadDashboard() {
+    try {
+        const stats = await api.get('/dashboard/stats');
+        document.getElementById('stat-students').textContent = stats.students_count;
+        document.getElementById('stat-subjects').textContent = stats.subjects_count;
+        document.getElementById('stat-exams').textContent = stats.exams_count;
+        document.getElementById('stat-grades').textContent = stats.grades_count;
+        const avg = stats.overall_average;
+        document.getElementById('stat-average').textContent = avg !== null ? formatNumber(avg) : '—';
+        const meter = document.getElementById('stat-average-meter');
+        meter.className = 'meter ' + (avg !== null ? gradeTier(avg) : '');
+        meter.firstElementChild.style.inlineSize = (avg || 0) + '%';
+        document.getElementById('stat-average-note').textContent = stats.grades_count
+            ? t('computed_from_n', { n: stats.grades_count })
+            : t('no_grades_yet');
+    } catch (e) {}
+
+    try {
+        const top = await api.get('/dashboard/top-students?limit=8');
+        const body = document.getElementById('top-students-body');
+        if (top.length === 0) {
+            body.innerHTML = `<tr><td colspan="4" class="text-center text-muted">${t('not_enough_data')}</td></tr>`;
+        } else {
+            body.innerHTML = top.map((s, i) => `
+                <tr>
+                    <td class="num text-faint">${i + 1}</td>
+                    <td><a class="name-cell link-strong" href="/students/${s.id}"><span class="avatar">${initials(s.name)}</span>${escapeHtml(s.name)}</a></td>
+                    <td class="text-muted">${escapeHtml(s.class || '—')}</td>
+                    <td>${gradeCell(s.average)}</td>
+                </tr>`).join('');
+        }
+    } catch (e) {}
+
+    try {
+        const subjectAvgs = await api.get('/dashboard/subject-averages');
+        const withData = subjectAvgs.filter(s => s.average !== null);
+        if (withData.length) {
+            renderBarChart('subject-avg-chart', withData.map(s => s.name), withData.map(s => s.average), { valueLabel: t('average') });
+        } else {
+            document.getElementById('subject-avg-chart').parentElement.innerHTML = `<div class="chart-empty">${t('no_grades_yet')}</div>`;
+        }
+    } catch (e) {}
+
+    try {
+        const exams = await api.get('/dashboard/recent-exams?limit=8');
+        const body = document.getElementById('recent-exams-body');
+        if (exams.length === 0) {
+            body.innerHTML = `<tr><td colspan="5" class="text-center text-muted">${t('no_exams_yet')}</td></tr>`;
+        } else {
+            body.innerHTML = exams.map(e => `
+                <tr>
+                    <td><a class="link-strong" href="/exams/${e.id}">${escapeHtml(e.name)}</a></td>
+                    <td><a class="text-link" href="/subjects/${e.subject_id}">${escapeHtml(e.subject_name)}</a></td>
+                    <td class="num">${e.grades_count}</td>
+                    <td class="num text-muted">${formatDate(e.created_at)}</td>
+                    <td><a class="btn btn-sm btn-outline" href="/exams/${e.id}">${t('enter_grades')}</a></td>
+                </tr>`).join('');
+        }
+    } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+{% endblock %}

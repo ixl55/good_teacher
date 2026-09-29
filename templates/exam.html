@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ t('exam_title') }}{% endblock %}
+{% block page_title %}{{ t('exam_title') }}{% endblock %}
+{% block page_subtitle %}{{ t('exam_subtitle') }}{% endblock %}
+
+{% block content %}
+<div class="breadcrumb" id="exam-breadcrumb">
+    <a href="/subjects" class="flex gap-8">{{ icon('book', 'icon-sm') }} {{ t('nav_subjects') }}</a> <span>/</span> <span>...</span>
+</div>
+
+<div id="exam-content">
+    <div class="spinner"></div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<div class="modal-backdrop" id="exam-edit-modal" role="dialog" aria-modal="true" aria-labelledby="exam-edit-title">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="exam-edit-title">{{ t('modal_edit_exam') }}</h3>
+            <button class="icon-btn" data-close-modal="exam-edit-modal" aria-label="{{ t('close') }}">{{ icon('close') }}</button>
+        </div>
+        <div class="modal-body">
+            <form id="exam-edit-form" onsubmit="event.preventDefault(); saveExamNameEdit();">
+                <div class="form-group">
+                    <label for="exam-edit-name">{{ t('field_exam_name') }} <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="exam-edit-name" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="exam-edit-modal">{{ t('cancel') }}</button>
+            <button class="btn btn-primary" id="btn-save-exam-name">{{ t('save') }}</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>window.EXAM_ID = {{ exam_id }};</script>
+<script src="{{ url_for('static', filename='js/grades.js') }}"></script>
+{% endblock %}

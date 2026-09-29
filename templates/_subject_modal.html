@@ -1,0 +1,22 @@
+{% from "_icons.html" import icon %}
+<div class="modal-backdrop" id="subject-modal" role="dialog" aria-modal="true" aria-labelledby="subject-modal-title">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="subject-modal-title">{{ t('modal_add_subject') }}</h3>
+            <button class="icon-btn" data-close-modal="subject-modal" aria-label="{{ t('close') }}">{{ icon('close') }}</button>
+        </div>
+        <div class="modal-body">
+            <form id="subject-form" onsubmit="event.preventDefault(); saveSubject();">
+                <input type="hidden" id="subject-id">
+                <div class="form-group">
+                    <label for="subject-name">{{ t('field_subject_name') }} <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="subject-name" required placeholder="{{ t('ph_subject') }}">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" data-close-modal="subject-modal">{{ t('cancel') }}</button>
+            <button class="btn btn-primary" id="btn-save-subject">{{ t('save') }}</button>
+        </div>
+    </div>
+</div>
